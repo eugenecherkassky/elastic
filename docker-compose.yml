@@ -1,0 +1,62 @@
+version: "3"
+services:
+  elasticsearch-node1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: elasticsearch-node1
+    networks:
+      - elastic-net
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - /usr/local/teramind/rec/_esdata1:/usr/share/elasticsearch/data
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch-node2,elasticsearch-node3,elasticsearch-node4
+      - cluster.name=teramind
+      - node.master=true
+
+  elasticsearch-node2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: elasticsearch-node2
+    networks:
+      - elastic-net
+    ports:
+      - "9201:9200"
+      - "9301:9300"
+    volumes:
+      - /usr/local/teramind/rec/_esdata2:/usr/share/elasticsearch/data
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch-node1,elasticsearch-node3,elasticsearch-node4
+      - cluster.name=teramind
+
+  elasticsearch-node3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: elasticsearch-node3
+    networks:
+      - elastic-net
+    ports:
+      - "9202:9200"
+      - "9302:9300"
+    volumes:
+      - /usr/local/teramind/rec/_esdata3:/usr/share/elasticsearch/data
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch-node1,elasticsearch-node2,elasticsearch-node4
+      - cluster.name=teramind
+
+  elasticsearch-node4:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.23
+    container_name: elasticsearch-node4
+    networks:
+      - elastic-net
+    ports:
+      - "9203:9200"
+      - "9303:9300"
+    volumes:
+      - /usr/local/teramind/rec/_esdata4:/usr/share/elasticsearch/data
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch-node1,elasticsearch-node2,elasticsearch-node3
+      - cluster.name=teramind
+
+networks:
+  elastic-net:
+    driver: bridge
